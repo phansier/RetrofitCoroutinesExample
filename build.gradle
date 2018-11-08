@@ -25,3 +25,29 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+final String KEY = "yandex_api_key"
+final String PROPERTIES_FILE = "local.properties"
+
+def missingKey = {
+    def message = """
+
+        ATTENTION!
+        Need to create file [$PROPERTIES_FILE], with key:
+        $KEY=...
+        You may get API key from https://tech.yandex.ru/rasp/raspapi/
+        
+    """
+    println(message)
+    throw Exception(message)
+}
+
+def secureFile = file("local.properties")
+if (!secureFile.exists()) {
+    missingKey()
+}
+Properties secureProperties = new Properties().load(secureFile.newInputStream())
+if(!secureProperties.hasProperty(KEY)) {
+    missingKey()
+}
+ext[key] = secureProperties[KEY]
