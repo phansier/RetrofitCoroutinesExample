@@ -4,14 +4,15 @@ import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import io.ktor.client.HttpClient
+import io.ktor.client.features.json.GsonSerializer
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.request.get
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import ru.beryukhov.retrofitcoroutinesexample.recyclerview.TrainItem
 import ru.beryukhov.retrofitcoroutinesexample.recyclerview.TrainsListAdapter
 import java.text.SimpleDateFormat
@@ -29,7 +30,7 @@ class MainActivity : Activity() {
         rasp.layoutManager = LinearLayoutManager(this)
         rasp.adapter = adapter
 
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.IO) {
             val responce = getData()
 
             withContext(Dispatchers.Main) {
@@ -49,29 +50,34 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun makeService(): TrainsInterface {
-        val builder = Retrofit.Builder()
-            .baseUrl("https://api.rasp.yandex.net/v3.0/")
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .addConverterFactory(GsonConverterFactory.create())
-
-        return builder.build().create(TrainsInterface::class.java)
-
-    }
+    private val BASE_URL = "https://api.rasp.yandex.net/v3.0"
+    private val GET_UUID = "$BASE_URL/search"
 
     suspend fun getData(): List<Segment> {
         val sdf = SimpleDateFormat("yyyy-MM-dd")
         val currentDate = sdf.format(Date())
         Log.d(TAG, SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()))
 
-        val responce = makeService().getElektrichki(
-            BuildConfig.YANDEX_API_KEY,//get your token here https://tech.yandex.ru/rasp/raspapi/
-            "c10743",//Odintsovo station
-            "s2000006",//Belorusskiy railway station
-            currentDate,
-            "suburban",
-            150
-        ).await()
-        return responce.segments!!
+        val apiKey = BuildConfig.YANDEX_API_KEY
+        val odintsovoStationCode = "c10743"
+        val belorusskiyRailTerminalCode = "s2000006"
+        val suburbanType = "suburban"
+
+        HttpClient() {
+            install(JsonFeature) {
+                serializer = GsonSerializer()
+            }
+        }.use {
+            val data: TrainModel = it.get(
+                "$GET_UUID/" +
+                        "?apikey=$apiKey" +
+                        "&from=$odintsovoStationCode" +
+                        "&to=$belorusskiyRailTerminalCode" +
+                        "&date=$currentDate" +
+                        "&transport_types=$suburbanType" +
+                        "&limit=150"
+            )
+            return data.segments!!
+        }
     }
 }
