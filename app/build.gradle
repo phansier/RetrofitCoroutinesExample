@@ -13,6 +13,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "YANDEX_API_KEY", "\"${getSecureApiKey()}\"")
     }
     buildTypes {
         release {
@@ -39,4 +41,34 @@ dependencies {
 
     implementation 'com.google.android.material:material:1.1.0-alpha01'
 
+}
+
+String getSecureApiKey() {
+    final String KEY = "yandex_api_key"
+    final String PROPERTIES_FILE = "local.properties"
+
+    def missingKey = {
+        def message = """
+
+            ATTENTION!
+            Need to create file [$PROPERTIES_FILE], with key:
+            $KEY=...
+            You may get API key from https://tech.yandex.ru/rasp/raspapi/
+        
+        """
+        println(message)
+        throw new Exception(message)
+    }
+
+    def secureFile = project.rootProject.file(PROPERTIES_FILE)
+    if (!secureFile.exists()) {
+        missingKey()
+    }
+    Properties secureProperties = new Properties()
+    secureProperties.load(secureFile.newDataInputStream())
+    if (secureProperties.getProperty(KEY) == null) {
+        println(secureProperties.getProperty(KEY))
+        missingKey()
+    }
+    return secureProperties[KEY]
 }

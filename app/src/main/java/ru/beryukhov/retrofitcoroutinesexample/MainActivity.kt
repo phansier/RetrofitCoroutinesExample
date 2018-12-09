@@ -65,8 +65,7 @@ class MainActivity : Activity() {
         Log.d(TAG, SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()))
 
         val responce = makeService().getElektrichki(
-
-            "token",//get your token here https://tech.yandex.ru/rasp/raspapi/
+            BuildConfig.YANDEX_API_KEY,//get your token here https://tech.yandex.ru/rasp/raspapi/
             "c10743",//Odintsovo station
             "s2000006",//Belorusskiy railway station
             currentDate,
