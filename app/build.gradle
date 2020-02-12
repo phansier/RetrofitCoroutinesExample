@@ -22,6 +22,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+    packagingOptions {
+        exclude 'META-INF/kotlinx-io.kotlin_module'
+        exclude 'META-INF/atomicfu.kotlin_module'
+        exclude 'META-INF/proguard/coroutines.pro'
+        exclude 'META-INF/kotlinx-coroutines-io.kotlin_module'
+        exclude 'META-INF/kotlinx-coroutines-core.kotlin_module'
+    }
 }
 
 dependencies {
@@ -33,16 +44,16 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.0.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.3'
 
     implementation 'com.google.android.material:material:1.1.0-alpha01'
 
-    implementation "io.ktor:ktor-client-core:1.0.1" //expect HttpClient
-    implementation "io.ktor:ktor-client-android:1.0.1" //actual HttpClient Android
-    //todo add other actual HttpClient implementations for Kotlin Multiplatform in corresponding module
+    //implementation "io.ktor:ktor-client-android:1.2.6"
+    implementation "io.ktor:ktor-client-okhttp:1.2.6"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.2.2"
 
-    implementation "io.ktor:ktor-client-gson:1.0.1"
+    implementation "io.ktor:ktor-client-gson:1.2.6"
 }
 
 String getSecureApiKey() {

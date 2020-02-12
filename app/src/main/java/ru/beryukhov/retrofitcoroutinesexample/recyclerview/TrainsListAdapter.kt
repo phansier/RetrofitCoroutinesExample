@@ -1,5 +1,6 @@
 package ru.beryukhov.retrofitcoroutinesexample.recyclerview
 
+import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -29,10 +30,20 @@ class TrainsListAdapter : SimpleListAdapter() {
                 val trainItem = items[position] as TrainItem
                 holder.arrival.text = trainItem.arrival
                 holder.departure.text = trainItem.departure
-                if(trainItem.transportTitle.equals("Стандарт плюс",true)){
-                    holder.transport_title.text = trainItem.transportTitle
-                    holder.transport_title.visibility=View.VISIBLE
+                val aero = "состав Аэроэкспресс".toLowerCase()
+                val stPlus = "Стандарт плюс".toLowerCase()
+                when (trainItem.transportTitle?.toLowerCase()){
+                    aero -> {
+                        holder.transport_title.text = trainItem.transportTitle
+                        holder.transport_title.visibility=View.VISIBLE
+                        holder.transport_title.setTextColor(Color.RED)
+                    }
+                    stPlus -> {
+                        holder.transport_title.text = trainItem.transportTitle
+                        holder.transport_title.visibility=View.VISIBLE
+                    }
                 }
+
                 holder.thread_title.text = trainItem.threadTitle
                 if (trainItem.expressType != null) {
                     holder.express_type.text = trainItem.expressType
