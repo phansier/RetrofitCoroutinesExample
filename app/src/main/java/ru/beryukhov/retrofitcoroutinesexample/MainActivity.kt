@@ -30,21 +30,22 @@ class MainActivity : Activity() {
         rasp.adapter = adapter
 
         GlobalScope.launch {
-            val responce = getData()
+            val response = getData()
 
             withContext(Dispatchers.Main) {
-                for (train in responce) {
-                    if (train.departure!! > (SimpleDateFormat("HH:mm").format(Date())))
-                        adapter.add(
+                adapter.submitList(
+                    response.mapNotNull { train ->
+                        if (train.departureFormatted > (SimpleDateFormat("HH:mm").format(Date())))
                             TrainItem(
-                                train.departure,
-                                train.arrival,
+                                train.departureFormatted,
+                                train.arrivalFormatted,
                                 train.thread?.transport_subtype?.title,
                                 train.thread?.title,
                                 train.thread?.express_type
                             )
-                        )
-                }
+                        else null
+                    }
+                )
             }
         }
     }

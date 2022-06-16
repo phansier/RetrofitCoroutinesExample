@@ -8,13 +8,13 @@ import ru.beryukhov.retrofitcoroutinesexample.R
 /**
  * Created by Andrey Beryukhov
  */
-public class TrainItem (val departure:String?, val arrival:String?, val transportTitle:String?, val threadTitle:String?, val expressType:String?):
-    IBaseListItem {
-    override fun getLayoutId(): Int {
-        return R.layout.train_item
-    }
-
-}
+data class TrainItem(
+    val departure: String?,
+    val arrival: String?,
+    val transportTitle: String?,
+    val threadTitle: String?,
+    val expressType: String?
+)
 
 class TrainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val departure: TextView = view.findViewById(R.id.departure)
