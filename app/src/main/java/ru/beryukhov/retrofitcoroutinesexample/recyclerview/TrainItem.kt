@@ -1,8 +1,8 @@
 package ru.beryukhov.retrofitcoroutinesexample.recyclerview
 
 import android.view.View
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.train_item.view.*
 import ru.beryukhov.retrofitcoroutinesexample.R
 
 /**
@@ -17,9 +17,9 @@ public class TrainItem (val departure:String?, val arrival:String?, val transpor
 }
 
 class TrainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    val departure = view.departure
-    val arrival = view.arrival
-    val transport_title = view.transport_title
-    val thread_title = view.thread_title
-    val express_type = view.express_type
+    val departure: TextView = view.findViewById(R.id.departure)
+    val arrival: TextView = view.findViewById(R.id.arrival)
+    val transport_title: TextView = view.findViewById(R.id.transport_title)
+    val thread_title: TextView = view.findViewById(R.id.thread_title)
+    val express_type: TextView = view.findViewById(R.id.express_type)
 }
